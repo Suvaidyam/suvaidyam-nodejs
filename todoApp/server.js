@@ -42,6 +42,13 @@ app.get('/data/:id/:id2/:id3/:id4', (req, res) => {
     return res.status(200).json(newData);
 });
 
+
+
+let APIs = require('./api/index');
+
+app.use('/api', APIs);
+
+
 app.use((req, res) => {
     res.status(404).json({ message: `[404] Not Found` });
 });
