@@ -45,7 +45,6 @@ app.get('/data/:id/:id2/:id3/:id4', (req, res) => {
 
 
 let APIs = require('./api/index');
-
 app.use('/api', APIs);
 
 

@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-// const todoGet = require('./get');
-// router.get('/todo', todoGet)
-
-// const todoPost = require('./post');
-// router.post('/todo', todoPost)
-
 const todo = require('./todo');
-
 router.get('/todo', todo.getTodo);
 router.post('/todo', todo.postTodo);
+
+
+const user = require('./user');
+router.get('/user', user.getUser);
+router.post('/user', user.postUser);
 
 module.exports = router;
 
