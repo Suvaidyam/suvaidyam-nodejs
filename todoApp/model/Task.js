@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 
 const TaskSchema = new Schema({
     task: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User' }, // Reference of User schema
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

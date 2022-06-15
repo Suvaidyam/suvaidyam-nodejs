@@ -1,6 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
+const JWT = require('jsonwebtoken');
+const JWT_SECRET = 'xydfskhdkskdjldjsjbdkjsdlk';
+
+const { login, register, veryToken, logout } = require('./auth');
+router.post('/login', login);
+router.post('/register', register);
+
+router.use(veryToken); // Middleware
+
+
 const todo = require('./todo');
 router.get('/todo', todo.getTodo);
 router.post('/todo', todo.postTodo);
