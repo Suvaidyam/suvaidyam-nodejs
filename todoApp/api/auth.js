@@ -32,6 +32,7 @@ module.exports = {
                 return res.status(400).json({ message: 'Bad Request: username and password are required' });
             }
             let user = await User.findOne({ username, password });
+
             if (user) {
                 let token = JWT.sign({ _id: user._id, username: user.username }, JWT_SECRET);
                 return res.json({

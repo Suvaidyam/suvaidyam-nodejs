@@ -14,7 +14,7 @@ module.exports = {
         try {
             // console.log('tokenData', req.user);
             // console.log('before', req.body)
-            req.body['user'] = req.user._id;
+            req.body.user = req.user._id; // {task: 'task', description:'dsdsds', user:'dsdsewewe'}
             // console.log('after', req.body)
             let task = await Task.create(req.body);// {task:"Hello"}
             return res.json(task);

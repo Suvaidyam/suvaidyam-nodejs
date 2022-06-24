@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Hello Guys!!</h1>
+    <fieldset>
+        <legend>
+            <h3 id="legendInfo"></h3>
+        </legend>
+        <input type='text' id='name' onkeyup="checkName();" />
+        <p id="nameError" style="color: red;"></p>
+        <input type='number' id='age' />
+        <p id="ageError"></p>
+        <button id="btn"></button>
+    </fieldset>
+
+    <br>
+    <hr>
+    <div id="table">
+        <table id="tbl" border="1">
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+        </table>
+    </div>
+    <script>
+        let members = [];
+
+        getItem();
+        openAddForm();
+
+
+
+        // Session Storage
+
+        function getItem() {
+
+            fetch(`http://localhost:3000/api/todo`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': localStorage.getItem('token')
+                }
+            }).then(function (response) {
+                return response.json()
+            }).then(function (data) {
+                members = data;
+                renderTable();
+
+            }).catch(error => console.error('Error:', error));
+
+        }
+        function setItem() {
+            sessionStorage.setItem('members', JSON.stringify(members));
+        }
+        // LocalStorage
+        /*
+        function getItem() {
+                let memData = localStorage.getItem('members');
+                if (memData) {
+                    members = JSON.parse(memData);
+                } else {
+                    setItem();
+                }
+            }
+            function setItem() {
+                localStorage.setItem('members', JSON.stringify(members));
+            }
+            */
+
+        function checkName() {
+            let name = document.getElementById('name').value;
+            for (let i = 0; i < members.length; i++) {
+                if (members[i].name == name) {
+                    document.getElementById('nameError').textContent = 'Name already exists.';
+                    return true;
+                }
+            }
+            document.getElementById('nameError').textContent = '';
+            return false;
+        }
+        function addMember() {
+
+            let name = document.getElementById('name').value;
+            let age = document.getElementById('age').value;
+            console.log(name, age);
+            if (!name) {
+                return alert('Name should not be empty.');
+            }
+            if (!age) {
+                return alert('Age should not be empty.');
+            }
+
+            if (checkName(name)) {
+                alert('Duplicate name')
+                return;
+            }
+
+            let member = {
+                'name': name,
+                'age': age
+            };
+            members.push(member);
+
+            setItem()
+
+
+            document.getElementById('name').value = '';
+            document.getElementById('age').value = ''
+
+            renderTable();
+
+        }
+
+        function deleteMember(index) {
+            members.splice(index, 1); // 1: startIndex 2: numElem
+            setItem()
+            renderTable();
+        }
+        function editMember(event) {
+            let newName = document.getElementById('name').value;
+            let newAge = document.getElementById('age').value;
+            members[event.currentTarget.indexValue] = {
+                name: newName,
+                age: newAge
+            }
+
+            setItem();
+            openAddForm();
+            renderTable();
+        }
+        function openAddForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('age').value = '';
+            let btn = document.getElementById('btn');
+
+            btn.removeEventListener('click', editMember);
+            btn.addEventListener('click', addMember);
+
+            btn.textContent = 'Add';
+            document.getElementById('legendInfo').textContent = 'Add member';
+        }
+        function openEditForm(index) {
+
+            document.getElementById('name').value = members[index].name;
+            document.getElementById('age').value = members[index].age;
+
+            let btn = document.getElementById('btn');
+
+            btn.removeEventListener('click', addMember);
+            btn.addEventListener('click', editMember);
+
+            btn.indexValue = index;
+
+            btn.textContent = 'Update';
+
+
+            document.getElementById('legendInfo').textContent = 'Edit member';
+        }
+        function renderTable() {
+            let tbl = document.getElementById('tbl');
+            tbl.innerHTML = ``;
+            for (let i = 0; i < members.length; i++) {
+                let tr = document.createElement('tr');
+
+                let tdName = document.createElement('td');
+                tdName.textContent = members[i].task;
+
+                let tdAge = document.createElement('td');
+                tdAge.textContent = members[i].completed;
+
+                let tdEdit = document.createElement('td');
+
+                // let editBtn = document.createElement('button');
+                // editBtn.textContent = 'Edit';
+                // editBtn.addEventListener('click', editMember(i));
+                tdEdit.innerHTML = `<button onclick="openEditForm(${i})">Edit</button>`
+
+                let tdDelete = document.createElement('td');
+                // let deleteBtn = document.createElement('button');
+                // deleteBtn.textContent = 'Delete';
+                // deleteBtn.addEventListener('click', deleteMember(i));
+
+                tdDelete.innerHTML = `<button onclick="deleteMember(${i})">Delete</button>`
+
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdAge);
+                tr.appendChild(tdEdit);
+                tr.appendChild(tdDelete);
+
+                tbl.appendChild(tr);
+            }
+        }
+
+    </script>
+</body>
+
+</html>
